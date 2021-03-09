@@ -9,7 +9,7 @@ class Controller
 {
     use TraitController;
 
-    public $title = '';
+    public $title = 'Home';
 
     public function render(string $file, array $options = [])
     {

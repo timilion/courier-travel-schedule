@@ -2,8 +2,8 @@
 
 return [
     //route => [class, action]
-    '/api' =>  [
-        'class' => 'controller\api',
+    '/' =>  [
+        'class' => 'controllers\Site',
         'action' => 'index'
     ],
 ];
