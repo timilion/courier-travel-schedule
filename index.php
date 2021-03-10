@@ -1,5 +1,6 @@
 <?php
 
+
 require_once 'func.php';
 
 $rewrite = require './config/rewrite.php';
