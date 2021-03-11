@@ -5,9 +5,10 @@ use core\DataBase;
 
 require_once '../func.php';
 $data = require '../data.php';
+$config = require '../config/db.php';
 $db = new DataBase();
 $conn = $db->connect();
-$dbName = 'tbl_task';
+$dbName = $config['dbname'];
 
 
 if (!$conn->query("SHOW TABLES FROM `" . $dbName . "` LIKE 'regions'")->fetch()) {
@@ -62,18 +63,18 @@ $cityArray = $conn->query("SELECT * FROM `regions`")->fetchAll(PDO::FETCH_ASSOC)
 $couriersArray = $conn->query("SELECT * FROM `couriers`")->fetchAll(PDO::FETCH_ASSOC);
 
 
-$period = intervalDay(strtotime("12-06-2019"));
+$period = intervalDay(strtotime("12-06-2019")) + 1;
 
-//TODO: проверить
+//TODO: переделать
 for ($i = 0; $i < $period; $i++) {
     $city = arrRand($cityArray); //city, duration
     $couries = arrRand($couriersArray); //full_name
     $full_name = $couries['full_name'];
     $duration = $city['duration'];
-    $currentTime = strtotime("12-06-2019") + 3600 * $i;
+    $currentTime = strtotime("12-06-2019") + 86400 * $i;
 
 
-    $stmt  = $conn->prepare("SELECT * FROM scheme WHERE courier_name = ?");
+    $stmt  = $conn->prepare("SELECT * FROM scheme WHERE courier_name = ?  ORDER BY departure_date DESC LIMIT 1");
     $stmt->execute([$full_name]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$row || ($row  && $currentTime > $row['arrival_date'])) {

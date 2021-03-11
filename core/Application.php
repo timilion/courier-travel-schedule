@@ -10,14 +10,9 @@ class Application
     private $rewrite = [];
 
 
-    public function __construct(array $rewrite)
+    public function run(array $rewrite)
     {
         $this->rewrite = $rewrite;
-    }
-
-
-    public function run()
-    {
         $route = isset($this->rewrite[$_SERVER['REQUEST_URI']]) ? $this->rewrite[$_SERVER['REQUEST_URI']] : null;
         if ($route) {
             extract($route);

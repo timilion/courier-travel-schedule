@@ -4,8 +4,9 @@
 <?= $this->getContent(APP . '/views/template/header.php') ?>
 
 <body>
-
-    <?= $content ?>
+    <div class="container">
+        <?= $content ?>
+    </div>
 
 </body>
 
