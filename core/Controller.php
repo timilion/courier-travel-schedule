@@ -17,9 +17,18 @@ class Controller
         $path = APP . '/views/' . $folder . '/' . $file . '.php';
         if (file_exists($path)) {
             $content = $this->getContent($path,  $options);
-            require_once APP . '/views/layauts/main.php';
-            die;
+            return $this->getContent(APP . '/views/layauts/main.php',  ['content' => $content]);
         }
         throw new Exception('not found file');
+    }
+
+    public function bodyParams()
+    {
+        return json_decode(file_get_contents('php://input'));
+    }
+
+    public function asJson($param)
+    {
+        return json_encode($param);
     }
 }

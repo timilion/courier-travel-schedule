@@ -1,8 +1,13 @@
+<?php
+$this->title = 'Расписание';
+
+?>
+
 <div class="row">
     <div class="shadow-sm p-3 mb-5 bg-body rounded">
         <div class="custom-row">
-            <span class="h2">Расписание</span>
-            <button class="btn btn-primary" type="button">Добавить</button>
+            <span class="h2"><?= $this->title ?></span>
+            <a class="btn btn-primary" href="/create">Добавить</a>
         </div>
         <hr>
         <?php if ($model) : ?>

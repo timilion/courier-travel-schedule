@@ -2,10 +2,9 @@
 
 use core\DataBase;
 
-
-require_once '../func.php';
-$data = require '../data.php';
-$config = require '../config/db.php';
+require_once  __DIR__ . '/../func.php';
+$data = require APP . '/data.php';
+$config = require APP . '/config/db.php';
 $db = new DataBase();
 $conn = $db->connect();
 $dbName = $config['dbname'];
@@ -55,33 +54,33 @@ if (!$conn->query("SHOW TABLES FROM `" . $dbName . "` LIKE 'scheme'")->fetch()) 
     FOREIGN KEY (`courier_name`) REFERENCES `couriers`(`full_name`) ON DELETE CASCADE ON UPDATE CASCADE
     )";
     $conn->query($sqlSchemeCreate);
+
+
+    $cityArray = $conn->query("SELECT * FROM `regions`")->fetchAll(PDO::FETCH_ASSOC);
+    $couriersArray = $conn->query("SELECT * FROM `couriers`")->fetchAll(PDO::FETCH_ASSOC);
+
+
+    $period = intervalDay(strtotime("12-06-2019")) + 1;
+
+    //TODO: переделать
+    for ($i = 0; $i < $period; $i++) {
+        $city = arrRand($cityArray); //city, duration
+        $couries = arrRand($couriersArray); //full_name
+        $full_name = $couries['full_name'];
+        $duration = $city['duration'];
+        $currentTime = strtotime("12-06-2019") + 86400 * $i;
+
+
+        $stmt  = $conn->prepare("SELECT * FROM scheme WHERE courier_name = ?  ORDER BY departure_date DESC LIMIT 1");
+        $stmt->execute([$full_name]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row || ($row  && $currentTime > $row['arrival_date'])) {
+            $arrival_date = $currentTime + 86400 * $duration;
+            $conn->query("INSERT INTO `scheme` (`id`, `region`, `departure_date`, `courier_name`,`arrival_date`) VALUES (NULL,'$city[city]', '$currentTime', '$full_name', '$arrival_date')");
+        }
+    }
+
     echo "Сreated and filled in a table with scheme" . PHP_EOL;
 }
-
-
-$cityArray = $conn->query("SELECT * FROM `regions`")->fetchAll(PDO::FETCH_ASSOC);
-$couriersArray = $conn->query("SELECT * FROM `couriers`")->fetchAll(PDO::FETCH_ASSOC);
-
-
-$period = intervalDay(strtotime("12-06-2019")) + 1;
-
-//TODO: переделать
-for ($i = 0; $i < $period; $i++) {
-    $city = arrRand($cityArray); //city, duration
-    $couries = arrRand($couriersArray); //full_name
-    $full_name = $couries['full_name'];
-    $duration = $city['duration'];
-    $currentTime = strtotime("12-06-2019") + 86400 * $i;
-
-
-    $stmt  = $conn->prepare("SELECT * FROM scheme WHERE courier_name = ?  ORDER BY departure_date DESC LIMIT 1");
-    $stmt->execute([$full_name]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$row || ($row  && $currentTime > $row['arrival_date'])) {
-        $arrival_date = $currentTime + 86400 * $duration;
-        $conn->query("INSERT INTO `scheme` (`id`, `region`, `departure_date`, `courier_name`,`arrival_date`) VALUES (NULL,'$city[city]', '$currentTime', '$full_name', '$arrival_date')");
-    }
-}
-
 
 $db->closeConnect();
