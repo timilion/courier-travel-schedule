@@ -21,7 +21,7 @@ trait TraitController
         $content = ob_get_contents();
         ob_end_clean();
         return $content;
-    } 
+    }
 
     /**
      * Undocumented function
@@ -31,6 +31,6 @@ trait TraitController
     public function getFolder(): string
     {
         $folder = explode('\\', get_class($this));
-        return $folder[count($folder) - 1];
+        return mb_strtolower($folder[count($folder) - 1]);
     }
 }
